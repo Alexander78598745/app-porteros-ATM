@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento Porteros - Atlético de Madrid</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c8102e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Seguimiento Porteros ATM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Porteros ATM">
+    <meta name="msapplication-TileColor" content="#c8102e">
+    <meta name="msapplication-TileImage" content="escudo-atm.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <img src="escudo-atm.png" alt="Atlético de Madrid" class="logo">
+                <h1>Seguimiento Porteros</h1>
+            </div>
+            <div class="match-info">
+                <div class="match-controls">
+                    <button id="newMatch" class="btn btn-primary">Nuevo Partido</button>
+                    <button id="saveMatch" class="btn btn-secondary" disabled>Guardar PDF</button>
+                    <button id="exportMatch" class="btn btn-accent">Exportar PDF</button>
+                    <button id="installApp" class="btn btn-install" style="display: none;">Instalar App</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Match Setup Modal -->
+        <div id="matchModal" class="modal">
+            <div class="modal-content">
+                <h2>Configurar Partido</h2>
+                <form id="matchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="club">Club:</label>
+                            <input type="text" id="club" name="club" value="Atlético de Madrid" readonly style="background-color: #f8f9fa;">
+                        </div>
+                        <div class="form-group">
+                            <label for="teamCategory">Seleccionar Equipo:</label>
+                            <select id="teamCategory" name="teamCategory" required>
+                                <option value="">Seleccionar equipo...</option>
+                                <option value="Juvenil A">Juvenil A</option>
+                                <option value="Juvenil B">Juvenil B</option>
+                                <option value="Juvenil C">Juvenil C</option>
+                                <option value="Juvenil D">Juvenil D</option>
+                                <option value="Juvenil E">Juvenil E</option>
+                                <option value="Cadete A">Cadete A</option>
+                                <option value="Cadete B">Cadete B</option>
+                                <option value="Cadete C">Cadete C</option>
+                                <option value="Cadete D">Cadete D</option>
+                                <option value="Cadete E">Cadete E</option>
+                                <option value="Cadete F">Cadete F</option>
+                                <option value="Infantil A">Infantil A</option>
+                                <option value="Infantil B">Infantil B</option>
+                                <option value="Infantil C">Infantil C</option>
+                                <option value="Infantil D">Infantil D</option>
+                                <option value="Infantil E">Infantil E</option>
+                                <option value="Infantil F">Infantil F</option>
+                                <option value="Alevín A">Alevín A</option>
+                                <option value="Alevín B">Alevín B</option>
+                                <option value="Alevín C">Alevín C</option>
+                                <option value="Alevín F7 A">Alevín F7 A</option>
+                                <option value="Alevín F7 B">Alevín F7 B</option>
+                                <option value="Alevín F7 C">Alevín F7 C</option>
+                                <option value="Benjamín A">Benjamín A</option>
+                                <option value="Benjamín B">Benjamín B</option>
+                                <option value="Benjamín C">Benjamín C</option>
+                                <option value="Benjamín D">Benjamín D</option>
+                                <option value="Benjamín E">Benjamín E</option>
+                                <option value="Benjamín F">Benjamín F</option>
+                                <option value="Prebenjamín A">Prebenjamín A</option>
+                                <option value="Prebenjamín B">Prebenjamín B</option>
+                                <option value="Prebenjamín C">Prebenjamín C</option>
+                                <option value="Prebenjamín D">Prebenjamín D</option>
+                                <option value="Prebenjamín E">Prebenjamín E</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="matchType">Tipo de Partido:</label>
+                            <select id="matchType" name="matchType" required>
+                                <option value="">Seleccionar tipo...</option>
+                                <option value="Liga">Liga</option>
+                                <option value="Amistoso">Amistoso</option>
+                                <option value="Torneo">Torneo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="matchday">Jornada:</label>
+                            <input type="number" id="matchday" name="matchday" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="opponent">Rival:</label>
+                            <input type="text" id="opponent" name="opponent" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="venue">Campo:</label>
+                            <select id="venue" name="venue" required>
+                                <option value="local">Local</option>
+                                <option value="visitante">Visitante</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stadium">Estadio/Campo:</label>
+                            <input type="text" id="stadium" name="stadium" placeholder="Nombre del estadio o campo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalkeeperCoach">Entrenador de Porteros:</label>
+                            <input type="text" id="goalkeeperCoach" name="goalkeeperCoach" placeholder="Nombre del entrenador" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="goalkeeperTitular">Portero Titular:</label>
+                            <input type="text" id="goalkeeperTitular" name="goalkeeperTitular" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalkeeperSuplente">Portero Suplente:</label>
+                            <input type="text" id="goalkeeperSuplente" name="goalkeeperSuplente" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Fecha:</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelMatch" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Iniciar Seguimiento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Current Match Info -->
+            <div id="currentMatch" class="current-match" style="display: none;">
+                <div class="match-header">
+                    <h2 id="matchTitle">Atlético de Madrid vs Rival</h2>
+                    
+                    <!-- Marcador -->
+                    <div class="score-section">
+                        <div class="score-team">
+                            <span id="homeTeamName" class="team-name">Atlético de Madrid</span>
+                            <div class="score-controls">
+                                <button class="btn-score btn-small" onclick="app.addGoal('home')">+</button>
+                                <span id="homeScore" class="score-display">0</span>
+                                <button class="btn-score btn-small" onclick="app.removeGoal('home')">-</button>
+                            </div>
+                        </div>
+                        <div class="score-separator">-</div>
+                        <div class="score-team">
+                            <span id="awayTeamName" class="team-name">Rival</span>
+                            <div class="score-controls">
+                                <button class="btn-score btn-small" onclick="app.addGoal('away')">+</button>
+                                <span id="awayScore" class="score-display">0</span>
+                                <button class="btn-score btn-small" onclick="app.removeGoal('away')">-</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-details">
+                        <span id="matchDate"></span> | 
+                        <span id="matchVenue"></span> | 
+                        <span id="matchGoalkeeper"></span> (Activo)
+                    </div>
+                    <div class="match-extra-info">
+                        <div><strong>Campo:</strong> <span id="matchStadium"></span></div>
+                        <div><strong>Entrenador de Porteros:</strong> <span id="matchCoach"></span></div>
+                    </div>
+                    <div class="goalkeepers-info">
+                        <div class="goalkeeper-item">
+                            <strong>Titular:</strong> <span id="goalkeeperTitularDisplay"></span>
+                            <span class="goalkeeper-minutes" id="titularMinutes">(0 min)</span>
+                        </div>
+                        <div class="goalkeeper-item">
+                            <strong>Suplente:</strong> <span id="goalkeeperSuplenteDisplay"></span>
+                            <span class="goalkeeper-minutes" id="suplenteMinutes">(0 min)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Time Controls -->
+                <div class="time-controls">
+                    <div class="match-phases">
+                        <button id="startFirstHalf" class="btn btn-phase">Iniciar 1º Tiempo</button>
+                        <button id="endFirstHalf" class="btn btn-phase" disabled>Terminar 1º Tiempo</button>
+                        <button id="startSecondHalf" class="btn btn-phase" disabled>Iniciar 2º Tiempo</button>
+                        <button id="endMatch" class="btn btn-phase" disabled>Finalizar Partido</button>
+                    </div>
+                    <div class="timer-section">
+                        <div class="current-phase" id="currentPhase">Partido No Iniciado</div>
+                        <div class="timer">
+                            <span id="currentTime">00:00</span>
+                            <button id="pauseTimer" class="btn btn-small" disabled>Pausar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goalkeeper Change -->
+                <div class="goalkeeper-change">
+                    <button id="goalkeeperChange" class="btn btn-accent">Cambio de Portero</button>
+                    <button id="addCustomGesture" class="btn btn-warning">Añadir Gesto Técnico</button>
+                </div>
+
+                <!-- Action Categories -->
+                <div class="action-categories">
+                    <div class="category-tabs">
+                        <button class="tab-btn active" data-category="defensive">Defensivas</button>
+                        <button class="tab-btn" data-category="reincorporation">Reincorporaciones</button>
+                        <button class="tab-btn" data-category="offensive">Ofensivas</button>
+                        <button class="tab-btn" data-category="other">Situaciones Tácticas</button>
+                    </div>
+
+                    <!-- Defensive Actions -->
+                    <div id="defensive" class="action-category active">
+                        <h3>Acciones Defensivas</h3>
+                        <div class="actions-grid">
+                            <div class="action-group">
+                                <h4>Blocajes</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Blocaje Frontal Raso</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="blocaje_frontal_raso" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_frontal_raso" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Blocaje Lateral Raso</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="blocaje_lateral_raso" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_lateral_raso" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Blocaje Lateral Media Altura</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="blocaje_lateral_media" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_lateral_media" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Blocaje Frontal Media Altura</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="blocaje_frontal_media" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_frontal_media" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Blocaje Aéreo</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="blocaje_aereo" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_aereo" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Desvíos</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Desvío Mano Natural</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="desvio_mano_natural" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="desvio_mano_natural" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Desvío Mano Cambio</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="desvio_mano_cambio" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="desvio_mano_cambio" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Desvío 2 Manos</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="desvio_2_manos" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="desvio_2_manos" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Juego Aéreo</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Despeje 1 Puño</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="despeje_1_puno" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="despeje_1_puno" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Despeje 2 Puños</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="despeje_2_punos" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="despeje_2_punos" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Prolongación</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="prolongacion_def" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="prolongacion_def" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>1vs1</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Reducción de Espacios</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="reduccion_espacios" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="reduccion_espacios" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Posición Cruz</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="posicion_cruz" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="posicion_cruz" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Apertura</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="apertura" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="apertura" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Otras Defensivas</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Rechace</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="rechace" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="rechace" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reincorporation Actions -->
+                    <div id="reincorporation" class="action-category">
+                        <h3>Reincorporaciones</h3>
+                        <div class="actions-grid">
+                            <div class="action-group">
+                                <h4>Tipos de Reincorporación</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Posición Básica</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="reinc_posicion_basica" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="reinc_posicion_basica" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Mismo Lado</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="reinc_mismo_lado" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="reinc_mismo_lado" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Lado Contrario</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="reinc_lado_contrario" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="reinc_lado_contrario" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Tras Blocaje</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="reinc_tras_blocaje" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="reinc_tras_blocaje" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offensive Actions -->
+                    <div id="offensive" class="action-category">
+                        <h3>Acciones Ofensivas</h3>
+                        <div class="actions-grid">
+                            <div class="action-group">
+                                <h4>Pases con Mano</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Mano Raso</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_mano_raso" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_raso" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Mano Picado</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_mano_picado" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_picado" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Mano Alto</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_mano_alto" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_alto" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Pases con Pie</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Volea</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="volea" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="volea" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Corto</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_corto" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_corto" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Largo</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_largo" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Despeje</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="despeje_ofensivo" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="despeje_ofensivo" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Continuidad en el Juego</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Perfilamiento + Control Orientado</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="perfilamiento_control_orientado" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="perfilamiento_control_orientado" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Largo con Control Previo</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_largo_control_previo" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo_control_previo" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Pase Largo con Balón en Movimiento</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_largo_balon_movimiento" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo_balon_movimiento" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Actions -->
+                    <div id="other" class="action-category">
+                        <h3>Situaciones Tácticas</h3>
+                        <div class="actions-grid">
+                            <div class="action-group">
+                                <h4>Posicionamiento y Táctica</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Posicionamiento y Bisectriz</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="posicionamiento_bisectriz" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_bisectriz" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Visión de Juego</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="vision_juego" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="vision_juego" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Saltar Líneas</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="saltar_lineas" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="saltar_lineas" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Comunicación</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Comunicación Verbal</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="comunicacion_verbal" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="comunicacion_verbal" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Comunicación No Verbal</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="comunicacion_no_verbal" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="comunicacion_no_verbal" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-group">
+                                <h4>Juego de Construcción</h4>
+                                <div class="action-item">
+                                    <div class="action-name">Pase a la Espalda de la Defensa</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="pase_espalda_defensa" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="pase_espalda_defensa" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Desmarques de Apoyo</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="desmarques_apoyo" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="desmarques_apoyo" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Despejes Orientados</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="despejes_orientados" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="despejes_orientados" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom Gestures -->
+                            <div class="action-group" id="customGesturesGroup" style="display: none;">
+                                <h4>Gestos Técnicos Personalizados</h4>
+                                <div id="customGesturesList">
+                                    <!-- Los gestos personalizados aparecerán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Log -->
+                <div class="action-log">
+                    <h3>Registro de Acciones</h3>
+                    <div class="log-filters">
+                        <button class="filter-btn active" data-filter="all">Todas</button>
+                        <button class="filter-btn" data-filter="error">Errores</button>
+                        <button class="filter-btn" data-filter="correcto">Correctas</button>
+                        <button class="filter-btn" data-filter="first">1º Tiempo</button>
+                        <button class="filter-btn" data-filter="second">2º Tiempo</button>
+                    </div>
+                    <div id="actionsList" class="actions-list">
+                        <!-- Las acciones aparecerán aquí dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Statistics Summary -->
+                <div class="statistics">
+                    <h3>Estadísticas del Partido</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalActions">0</div>
+                            <div class="stat-label">Total Acciones</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-number" id="correctActions">0</div>
+                            <div class="stat-label">Correctas</div>
+                        </div>
+                        <div class="stat-card error">
+                            <div class="stat-number" id="errorActions">0</div>
+                            <div class="stat-label">Errores</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="successRate">0%</div>
+                            <div class="stat-label">% Acierto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-content">
+                    <img src="escudo-atm.png" alt="Atlético de Madrid" class="welcome-logo">
+                    <h2>Seguimiento de Porteros</h2>
+                    <p>Atlético de Madrid</p>
+                    <p class="slogan">NUNCA DEJES DE CREER</p>
+                    <div class="welcome-info">
+                        <p><strong>💡 Instala la aplicación en tu dispositivo</strong></p>
+                        <p>En PC/Laptop: Busca el icono de instalación en la barra de direcciones</p>
+                        <p>En móvil: Usa "Añadir a pantalla de inicio" desde el menú del navegador</p>
+                    </div>
+                    <button id="startNewMatch" class="btn btn-primary btn-large">Nuevo Partido</button>
+                    <button id="loadMatch" class="btn btn-secondary btn-large">Cargar Partido</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Goalkeeper Change Modal -->
+        <div id="goalkeeperChangeModal" class="modal">
+            <div class="modal-content">
+                <h2>Cambio de Portero</h2>
+                <form id="goalkeeperChangeForm">
+                    <div class="form-group">
+                        <label for="newGoalkeeper">Nuevo Portero:</label>
+                        <select id="newGoalkeeper" name="newGoalkeeper" required>
+                            <option value="">Seleccionar portero</option>
+                            <!-- Las opciones se llenarán dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="changeReason">Motivo del Cambio:</label>
+                        <select id="changeReason" name="changeReason" required>
+                            <option value="lesion">Lesión</option>
+                            <option value="tecnico">Técnico</option>
+                            <option value="tarjeta">Tarjeta Roja</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelGoalkeeperChange" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar Cambio</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Custom Gesture Modal -->
+        <div id="customGestureModal" class="modal">
+            <div class="modal-content">
+                <h2>Añadir Gesto Técnico</h2>
+                <form id="customGestureForm">
+                    <div class="form-group">
+                        <label for="gestureName">Nombre del Gesto:</label>
+                        <input type="text" id="gestureName" name="gestureName" required placeholder="Ej: Pase largo con precisión">
+                    </div>
+                    <div class="form-group">
+                        <label for="gestureCategory">Categoría:</label>
+                        <select id="gestureCategory" name="gestureCategory" required>
+                            <option value="defensivas">Defensivas</option>
+                            <option value="ofensivas">Ofensivas</option>
+                            <option value="reincorporaciones">Reincorporaciones</option>
+                            <option value="situaciones_tacticas">Situaciones Tácticas</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelCustomGesture" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Añadir Gesto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Goal Against Modal -->
+        <div id="goalAgainstModal" class="modal">
+            <div class="modal-content">
+                <h2>Gol en Contra</h2>
+                <p>¿Qué portero recibió el gol?</p>
+                <form id="goalAgainstForm">
+                    <div class="form-group">
+                        <label for="goalAgainstGoalkeeper">Portero:</label>
+                        <select id="goalAgainstGoalkeeper" name="goalAgainstGoalkeeper" required>
+                            <option value="">Seleccionar portero...</option>
+                            <option value="titular">Titular</option>
+                            <option value="suplente">Suplente</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelGoalAgainst" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
