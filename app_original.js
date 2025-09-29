@@ -1339,43 +1339,18 @@ class GoalkeeperTracker {
     }
 }
 
-// Service Worker registration para funcionalidad offline (CORREGIDO PARA APK)
+// Service Worker registration para funcionalidad offline
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Usar ruta relativa para compatibilidad con APK
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('/sw.js')
             .then(registration => {
-                console.log('✅ SW registrado exitosamente:', registration);
-                console.log('📍 Scope:', registration.scope);
-                
-                // Verificar estado
-                if (registration.active) {
-                    console.log('🟢 Service Worker activo y listo para offline');
-                } else if (registration.installing) {
-                    console.log('🟡 Service Worker instalando...');
-                } else if (registration.waiting) {
-                    console.log('🟠 Service Worker esperando activación');
-                }
+                console.log('SW registrado: ', registration);
             })
             .catch(registrationError => {
-                console.error('❌ SW registro falló:', registrationError);
+                console.log('SW registro falló: ', registrationError);
             });
     });
-    
-    // Verificar cuando esté listo
-    navigator.serviceWorker.ready.then(() => {
-        console.log('🚀 Service Worker listo - App funciona OFFLINE');
-    });
-} else {
-    console.warn('⚠️ Service Worker no soportado en este navegador');
 }
-
-// Debug info para troubleshooting
-console.log('🔍 DEBUG - Información del entorno:');
-console.log('- Protocol:', window.location.protocol);
-console.log('- Host:', window.location.host);
-console.log('- ServiceWorker support:', 'serviceWorker' in navigator);
-console.log('- LocalStorage support:', 'localStorage' in window);
 
 // Inicializar la aplicación cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
