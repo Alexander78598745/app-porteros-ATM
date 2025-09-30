@@ -1291,6 +1291,135 @@ class GoalkeeperTracker {
                     
                     // Generar todo el contenido
                     generatePDFContent();
+                    
+                    // Cuadro de información del partido
+                    doc.setFillColor(245, 245, 245);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 80, 'F');
+                    doc.setDrawColor(...atletiRed);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 80);
+                    
+                    yPosition += 10;
+                    addText("INFORMACIÓN DEL PARTIDO", 14, true, atletiRed);
+                    yPosition += 5;
+                    
+                    addText(`Club: ${this.currentMatch.club || 'Atlético de Madrid'}`, 10, true);
+                    addText(`Equipo: ${this.currentMatch.teamCategory || 'N/A'}`, 10);
+                    addText(`Tipo de Partido: ${this.currentMatch.matchType || 'N/A'}`, 10);
+                    addText(`Jornada: ${this.currentMatch.matchday}`, 10);
+                    addText(`Rival: ${this.currentMatch.opponent}`, 10, true);
+                    addText(`Campo: ${this.currentMatch.venue === 'local' ? 'Local' : 'Visitante'} - ${this.currentMatch.stadium || 'N/A'}`, 10);
+                    
+                    const matchDate = new Date(this.currentMatch.date);
+                    addText(`Fecha: ${matchDate.toLocaleDateString('es-ES')}`, 10);
+                    addText(`Entrenador de Porteros: ${this.currentMatch.goalkeeperCoach || 'N/A'}`, 10);
+                    
+                    yPosition += 10;
+                    
+                    // Cuadro de resultado y porteros
+                    doc.setFillColor(240, 248, 255);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 50, 'F');
+                    doc.setDrawColor(...atletiBlue);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 50);
+                    
+                    yPosition += 10;
+                    addText("RESULTADO Y PORTEROS", 14, true, atletiBlue);
+                    yPosition += 5;
+                    
+                    // Marcador centrado y destacado
+                    const scoreText = `${this.currentMatch.teamCategory || 'ATM'} ${this.currentMatch.homeScore || 0} - ${this.currentMatch.awayScore || 0} ${this.currentMatch.opponent}`;
+                    doc.setFontSize(16);
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(...atletiRed);
+                    const scoreWidth = doc.getTextWidth(scoreText);
+                    doc.text(scoreText, (pageWidth - scoreWidth) / 2, yPosition);
+                    yPosition += 10;
+                    doc.setTextColor(0, 0, 0);
+                    
+                    addText(`Portero Titular: ${this.currentMatch.goalkeeperTitular} (${this.currentMatch.titularMinutes || 0} min)`, 10);
+                    addText(`Portero Suplente: ${this.currentMatch.goalkeeperSuplente} (${this.currentMatch.suplenteMinutes || 0} min)`, 10);
+                    
+                    yPosition += 15;
+                    
+                    // Estadísticas generales
+                    checkPageBreak(70);
+                    const totalActions = this.actions.filter(a => a.action !== 'cambio_portero' && a.action !== 'gol_en_contra').length;
+                    const correct = this.actions.filter(a => a.result === 'correcto').length;
+                    const errors = this.actions.filter(a => a.result === 'error').length;
+                    const successRate = totalActions > 0 ? Math.round((correct / totalActions) * 100) : 0;
+                    
+                    // Cuadro de estadísticas
+                    doc.setFillColor(240, 255, 240);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 60, 'F');
+                    doc.setDrawColor(40, 167, 69);
+                    doc.rect(margin, yPosition, pageWidth - 2*margin, 60);
+                    
+                    yPosition += 10;
+                    addText("ESTADÍSTICAS GENERALES", 14, true, [40, 167, 69]);
+                    yPosition += 5;
+                    
+                    addText(`Total de Acciones Técnicas: ${totalActions}`, 10);
+                    addText(`Acciones Correctas: ${correct}`, 10, false, [40, 167, 69]);
+                    addText(`Errores: ${errors}`, 10, false, [220, 53, 69]);
+                    addText(`Porcentaje de Acierto: ${successRate}%`, 12, true, successRate >= 70 ? [40, 167, 69] : [255, 140, 0]);
+                    
+                    yPosition += 15;
+                    
+                    // Registro cronológico
+                    if (this.actions.length > 0) {
+                        checkPageBreak(30);
+                        addText("REGISTRO CRONOLÓGICO DE ACCIONES", 14, true, atletiBlue);
+                        yPosition += 5;
+                        
+                        this.actions.forEach(action => {
+                            checkPageBreak(8);
+                            let actionDisplay = this.getActionDisplayName(action.action);
+                            let textColor = [0, 0, 0];
+                            
+                            if (action.action === 'cambio_portero' && action.details) {
+                                actionDisplay = `CAMBIO: ${action.details.previousGoalkeeper} → ${action.details.newGoalkeeper} (${action.details.reason})`;
+                                textColor = atletiBlue;
+                            } else if (action.action === 'gol_en_contra' && action.details) {
+                                actionDisplay = `GOL EN CONTRA recibido por ${action.details.goalkeeperName}`;
+                                textColor = [220, 53, 69];
+                            } else if (action.action === 'gol_a_favor' && action.details) {
+                                actionDisplay = `GOL A FAVOR - Marcador: ${action.details.scoreAfter}`;
+                                textColor = [40, 167, 69];
+                            }
+                            
+                            const result = action.result === 'cambio' ? 'CAMBIO' : 
+                                         action.result === 'gol_recibido' ? 'GOL EN CONTRA' :
+                                         action.result === 'gol_anotado' ? 'GOL A FAVOR' :
+                                         (action.result === 'correcto' ? 'CORRECTO' : 'ERROR');
+                            const half = action.half === 'first' ? '1º Tiempo' : 
+                                        action.half === 'second' ? '2º Tiempo' : 'Descanso';
+                            
+                            const resultColor = result === 'CORRECTO' ? [40, 167, 69] : 
+                                              result === 'ERROR' ? [220, 53, 69] : textColor;
+                            
+                            addText(`${action.time} | ${actionDisplay}`, 9, false, textColor);
+                            addText(`       → ${result} (${half})`, 8, true, resultColor);
+                        });
+                    }
+                    
+                    // Pie de página elegante
+                    const footerY = pageHeight - 25;
+                    doc.setFillColor(...atletiRed);
+                    doc.rect(0, footerY, pageWidth, 25, 'F');
+                    
+                    doc.setTextColor(...atletiWhite);
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "normal");
+                    const generatedText = `Informe generado el ${new Date().toLocaleString('es-ES')}`;
+                    const appText = "NUNCA DEJES DE CREER - Aplicación de Seguimiento de Porteros ATM";
+                    
+                    doc.text(generatedText, margin, footerY + 10);
+                    doc.text(appText, margin, footerY + 18);
+                    
+                    // Descargar PDF
+                    const filename = `Seguimiento_${this.currentMatch.activeGoalkeeper}_${this.currentMatch.opponent}_${this.currentMatch.date}.pdf`;
+                    doc.save(filename);
+                    
+                    this.showNotification(`PDF ${type === 'save' ? 'guardado' : 'exportado'} correctamente`, 'success');
                 };
                 
                 img.onerror = () => {
