@@ -630,20 +630,14 @@ class GoalkeeperTracker {
     }
 
     updateGoalkeeperMinutes() {
-        if (!this.currentMatch || !this.startTime || this.matchPhase === 'not_started') return;
+        if (!this.currentMatch || this.matchPhase === 'not_started') return;
         
         // Solo actualizar minutos si el partido está en curso (no en descanso o finalizado)
         if (this.matchPhase === 'first_half' || this.matchPhase === 'second_half') {
-            // Tiempo transcurrido en el cronómetro del partido (solo tiempo de juego real)
-            const currentGameTime = this.isPaused ? this.pausedTime : Date.now() - this.startTime;
-            const currentGameMinutes = Math.floor(currentGameTime / 60000);
-            
-            // Tiempo cuando el portero actual empezó a jugar (referenciado al cronómetro del partido)
-            const goalkeeperStartGameTime = this.currentMatch.activeGoalkeeperStartTime - this.startTime;
-            const goalkeeperStartMinutes = Math.floor(goalkeeperStartGameTime / 60000);
-            
-            // Minutos jugados por el portero actual en este período
-            const minutesPlayedThisPeriod = Math.max(0, currentGameMinutes - goalkeeperStartMinutes);
+            // Tiempo transcurrido desde que el portero actual empezó a jugar en este período
+            const now = Date.now();
+            const timeSinceGoalkeeperStart = now - this.currentMatch.activeGoalkeeperStartTime;
+            const minutesPlayedThisPeriod = Math.floor(timeSinceGoalkeeperStart / 60000);
             
             if (this.currentMatch.activeGoalkeeper === this.currentMatch.goalkeeperTitular) {
                 const baseMinutes = this.currentMatch.titularMinutesBefore || 0;
@@ -759,6 +753,9 @@ class GoalkeeperTracker {
     }
 
     endMatch() {
+        // Actualizar minutos finales del portero activo antes de finalizar
+        this.updateGoalkeeperMinutes();
+        
         this.matchPhase = 'finished';
         this.currentMatch.endTime = new Date();
         this.pauseTimer();

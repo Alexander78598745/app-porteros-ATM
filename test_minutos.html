@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Cálculo de Minutos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        button {
+            background-color: #dc143c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #b91c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba de Cálculo de Minutos por Portero</h1>
+    <p>Esta página simula el cálculo de minutos para verificar que la corrección funcione correctamente.</p>
+
+    <div class="test-case">
+        <h3>📋 Escenario de Prueba Reportado</h3>
+        <p><strong>Situación:</strong> Fran juega 7 min (primer tiempo), Jorge juega 30 min (segundo tiempo)</p>
+        <p><strong>Resultado esperado:</strong> Fran = 7 min, Jorge = 30 min</p>
+        
+        <button onclick="simularEscenario()">🚀 Simular Escenario</button>
+        <button onclick="limpiarResultados()">🧹 Limpiar</button>
+        
+        <div id="resultados"></div>
+    </div>
+
+    <div class="test-case">
+        <h3>⏱️ Prueba en Tiempo Real</h3>
+        <p>Simula el funcionamiento con cronómetro real (versión acelerada):</p>
+        
+        <button onclick="iniciarPruebaReal()">▶️ Iniciar Prueba</button>
+        <button onclick="detenerPrueba()">⏹️ Detener</button>
+        
+        <div id="cronometro">Cronómetro: 00:00</div>
+        <div id="minutosPorteros">
+            <div>Fran: 0 min</div>
+            <div>Jorge: 0 min</div>
+        </div>
+        <div id="estadoPrueba"></div>
+    </div>
+
+    <script>
+        // Simulación del cálculo corregido
+        function calcularMinutos(tiempoInicioPortero, tiempoActual, minutosBase = 0) {
+            const tiempoTranscurrido = tiempoActual - tiempoInicioPortero;
+            const minutosJugados = Math.floor(tiempoTranscurrido / 60000); // 60000 ms = 1 minuto
+            return minutosBase + minutosJugados;
+        }
+
+        function simularEscenario() {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '<h4>🔄 Simulando escenario...</h4>';
+
+            // Simular timestamps (en ms desde epoch)
+            const inicioPartido = Date.now() - 40 * 60 * 1000; // 40 min atrás
+            
+            // Fran juega primer tiempo: 7 minutos
+            const inicioFran = inicioPartido;
+            const finPrimerTiempo = inicioPartido + 7 * 60 * 1000; // 7 min después
+            const minutosFran = calcularMinutos(inicioFran, finPrimerTiempo, 0);
+            
+            // Jorge juega segundo tiempo: 30 minutos
+            const inicioSegundoTiempo = finPrimerTiempo + 15 * 60 * 1000; // 15 min descanso
+            const inicioJorge = inicioSegundoTiempo;
+            const finPartido = inicioSegundoTiempo + 30 * 60 * 1000; // 30 min después
+            const minutosJorge = calcularMinutos(inicioJorge, finPartido, 0);
+
+            setTimeout(() => {
+                let html = '<h4>📊 Resultados de la Simulación:</h4>';
+                
+                html += `<div class="result ${minutosFran === 7 ? 'success' : 'error'}">`;
+                html += `<strong>Fran:</strong> ${minutosFran} minutos ${minutosFran === 7 ? '✅' : '❌'}`;
+                html += `</div>`;
+                
+                html += `<div class="result ${minutosJorge === 30 ? 'success' : 'error'}">`;
+                html += `<strong>Jorge:</strong> ${minutosJorge} minutos ${minutosJorge === 30 ? '✅' : '❌'}`;
+                html += `</div>`;
+                
+                if (minutosFran === 7 && minutosJorge === 30) {
+                    html += '<div class="result success"><strong>🎉 ¡PRUEBA EXITOSA!</strong> El cálculo funciona correctamente.</div>';
+                } else {
+                    html += '<div class="result error"><strong>❌ FALLO EN LA PRUEBA</strong> Hay errores en el cálculo.</div>';
+                }
+                
+                resultadosDiv.innerHTML = html;
+            }, 1000);
+        }
+
+        function limpiarResultados() {
+            document.getElementById('resultados').innerHTML = '';
+        }
+
+        // Prueba en tiempo real
+        let pruebaTimer = null;
+        let inicioTiempoReal = null;
+        let porteroActual = 'Fran';
+        let inicioPorteroActual = null;
+        let minutosFranBase = 0;
+        let minutosJorgeBase = 0;
+        let fase = 'primer_tiempo'; // primer_tiempo, descanso, segundo_tiempo
+
+        function iniciarPruebaReal() {
+            if (pruebaTimer) detenerPrueba();
+            
+            inicioTiempoReal = Date.now();
+            inicioPorteroActual = Date.now();
+            porteroActual = 'Fran';
+            minutosFranBase = 0;
+            minutosJorgeBase = 0;
+            fase = 'primer_tiempo';
+            
+            document.getElementById('estadoPrueba').innerHTML = '<div class="result">📍 Fase: Primer Tiempo - Fran jugando</div>';
+            
+            pruebaTimer = setInterval(() => {
+                actualizarPruebaReal();
+            }, 100); // Actualizar cada 100ms para suavidad visual
+        }
+
+        function actualizarPruebaReal() {
+            const ahora = Date.now();
+            const tiempoTotal = Math.floor((ahora - inicioTiempoReal) / 1000); // en segundos
+            const minutos = Math.floor(tiempoTotal / 60);
+            const segundos = tiempoTotal % 60;
+            
+            document.getElementById('cronometro').textContent = 
+                `Cronómetro: ${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            
+            // Cambios automáticos para simular el escenario
+            if (fase === 'primer_tiempo' && tiempoTotal >= 7) {
+                // Después de 7 segundos (simulando 7 minutos), cambiar a descanso
+                minutosFranBase = calcularMinutos(inicioPorteroActual, ahora, minutosFranBase);
+                fase = 'descanso';
+                document.getElementById('estadoPrueba').innerHTML = '<div class="result">⏸️ Fase: Descanso - No se cuentan minutos</div>';
+            } else if (fase === 'descanso' && tiempoTotal >= 10) {
+                // Después de 10 segundos total (3 seg descanso), iniciar segundo tiempo con Jorge
+                porteroActual = 'Jorge';
+                inicioPorteroActual = ahora;
+                fase = 'segundo_tiempo';
+                document.getElementById('estadoPrueba').innerHTML = '<div class="result">📍 Fase: Segundo Tiempo - Jorge jugando</div>';
+            } else if (fase === 'segundo_tiempo' && tiempoTotal >= 40) {
+                // Después de 40 segundos total (30 seg para Jorge), finalizar
+                minutosJorgeBase = calcularMinutos(inicioPorteroActual, ahora, minutosJorgeBase);
+                detenerPrueba();
+                document.getElementById('estadoPrueba').innerHTML = '<div class="result success">🏁 ¡Partido terminado! Verificar resultados.</div>';
+                return;
+            }
+            
+            // Calcular minutos actuales
+            let minutosFran = minutosFranBase;
+            let minutosJorge = minutosJorgeBase;
+            
+            if (fase === 'primer_tiempo' && porteroActual === 'Fran') {
+                minutosFran = calcularMinutos(inicioPorteroActual, ahora, minutosFranBase);
+            } else if (fase === 'segundo_tiempo' && porteroActual === 'Jorge') {
+                minutosJorge = calcularMinutos(inicioPorteroActual, ahora, minutosJorgeBase);
+            }
+            
+            document.getElementById('minutosPorteros').innerHTML = `
+                <div>Fran: ${minutosFran} min ${porteroActual === 'Fran' && fase !== 'descanso' ? '(jugando)' : ''}</div>
+                <div>Jorge: ${minutosJorge} min ${porteroActual === 'Jorge' && fase !== 'descanso' ? '(jugando)' : ''}</div>
+            `;
+        }
+
+        function detenerPrueba() {
+            if (pruebaTimer) {
+                clearInterval(pruebaTimer);
+                pruebaTimer = null;
+            }
+        }
+
+        // Limpiar al cerrar página
+        window.addEventListener('beforeunload', detenerPrueba);
+    </script>
+</body>
+</html>
