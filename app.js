@@ -83,6 +83,15 @@ class GoalkeeperTracker {
         document.getElementById('cancelCustomGesture').addEventListener('click', () => this.hideCustomGestureModal());
         document.getElementById('customGestureForm').addEventListener('submit', (e) => this.addCustomGesture(e));
 
+        // Observaciones
+        document.getElementById('addObservation').addEventListener('click', () => this.showObservationModal());
+        document.getElementById('cancelObservation').addEventListener('click', () => this.hideObservationModal());
+        document.getElementById('observationForm').addEventListener('submit', (e) => this.addObservation(e));
+
+        // Gol en contra mejorado
+        document.getElementById('cancelGoalAgainst').addEventListener('click', () => this.hideGoalAgainstModal());
+        document.getElementById('goalAgainstForm').addEventListener('submit', (e) => this.processGoalAgainst(e));
+
         // Tabs de categorías
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.switchCategory(e.target.dataset.category));
@@ -386,9 +395,11 @@ class GoalkeeperTracker {
         
         const formData = new FormData(e.target);
         const goalAgainstGoalkeeper = formData.get('goalAgainstGoalkeeper');
+        const goalType = formData.get('goalType');
+        const goalkeeperFault = formData.get('goalkeeperFault');
         
-        if (!goalAgainstGoalkeeper) {
-            this.showNotification('Debe seleccionar un portero', 'error');
+        if (!goalAgainstGoalkeeper || !goalType || !goalkeeperFault) {
+            this.showNotification('Debe completar todos los campos', 'error');
             return;
         }
         
@@ -405,15 +416,66 @@ class GoalkeeperTracker {
                 goalkeeper: goalAgainstGoalkeeper,
                 goalkeeperName: goalAgainstGoalkeeper === 'titular' 
                     ? this.currentMatch.goalkeeperTitular 
-                    : this.currentMatch.goalkeeperSuplente
+                    : this.currentMatch.goalkeeperSuplente,
+                goalType: goalType,
+                goalkeeperFault: goalkeeperFault,
+                scoreAfter: `${this.currentMatch.homeScore}-${this.currentMatch.awayScore}`
             }
         };
 
         this.actions.push(goalAction);
         this.updateActionLog();
+        this.updateStatistics();
+        this.saveToStorage();
         this.hideGoalAgainstModal();
         
         this.showNotification(`Gol en contra registrado para ${goalAction.details.goalkeeperName}`, 'info');
+    }
+
+    showObservationModal() {
+        if (!this.currentMatch) {
+            this.showNotification('No hay partido activo', 'error');
+            return;
+        }
+        document.getElementById('observationModal').style.display = 'flex';
+    }
+
+    hideObservationModal() {
+        document.getElementById('observationModal').style.display = 'none';
+        document.getElementById('observationForm').reset();
+    }
+
+    addObservation(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const observationText = formData.get('observationText').trim();
+        
+        if (!observationText) {
+            this.showNotification('Debe escribir una observación', 'error');
+            return;
+        }
+        
+        // Registrar la observación como una acción especial
+        const observationAction = {
+            id: Date.now(),
+            action: 'observacion',
+            result: 'anotacion',
+            time: this.getCurrentTime(),
+            half: this.currentHalf,
+            timestamp: new Date(),
+            matchId: this.currentMatch.id,
+            details: {
+                text: observationText
+            }
+        };
+
+        this.actions.push(observationAction);
+        this.updateActionLog();
+        this.saveToStorage();
+        this.hideObservationModal();
+        
+        this.showNotification('Observación añadida correctamente', 'success');
     }
 
     processGoalkeeperChange(e) {
@@ -873,7 +935,11 @@ class GoalkeeperTracker {
             'comunicacion': 'Comunicación',
             'cambio_portero': 'Cambio de Portero',
             'gol_a_favor': 'GOL A FAVOR',
-            'vision_juego': 'Visión de Juego'
+            'gol_en_contra': 'GOL EN CONTRA',
+            'vision_juego': 'Visión de Juego',
+            'posicionamiento_fase_ofensiva': 'Posicionamiento en Fase Ofensiva',
+            'posicionamiento_fase_defensiva': 'Posicionamiento en Fase Defensiva',
+            'observacion': 'OBSERVACIÓN'
         };
 
         // Si es un gesto personalizado, buscar en la lista
@@ -883,6 +949,35 @@ class GoalkeeperTracker {
         }
 
         return actionNames[action] || action.replace(/_/g, ' ');
+    }
+
+    getGoalTypeDisplay(goalType) {
+        const goalTypes = {
+            'penalti': 'Penalti',
+            'cabeza': 'Cabeza',
+            'frontal_area': 'Frontal del área',
+            'jugada_colectiva': 'Jugada colectiva',
+            'tiro_libre': 'Tiro libre',
+            'corner': 'Córner',
+            'dentro_area': 'Dentro del área',
+            'fuera_area': 'Fuera del área',
+            'contragolpe': 'Contragolpe',
+            'tiro_lejano': 'Tiro lejano',
+            'jugada_individual': 'Jugada individual',
+            'falta_lateral': 'Falta lateral',
+            'rebote': 'Rebote',
+            'autogol': 'Autogol'
+        };
+        return goalTypes[goalType] || goalType;
+    }
+
+    getGoalkeeperFaultDisplay(fault) {
+        const faultTypes = {
+            'si': 'SÍ fue fallo',
+            'no': 'NO fue fallo',
+            'dudoso': 'Dudoso'
+        };
+        return faultTypes[fault] || fault;
     }
 
     updateActionLog() {
@@ -904,6 +999,12 @@ class GoalkeeperTracker {
             let actionDisplay = this.getActionDisplayName(action.action);
             if (action.action === 'cambio_portero' && action.details) {
                 actionDisplay = `Cambio: ${action.details.previousGoalkeeper} → ${action.details.newGoalkeeper} (${action.details.reason})`;
+            } else if (action.action === 'gol_en_contra' && action.details) {
+                const goalTypeDisplay = this.getGoalTypeDisplay(action.details.goalType);
+                const faultDisplay = this.getGoalkeeperFaultDisplay(action.details.goalkeeperFault);
+                actionDisplay = `GOL EN CONTRA - ${action.details.goalkeeperName} (${goalTypeDisplay}, ${faultDisplay})`;
+            } else if (action.action === 'observacion' && action.details) {
+                actionDisplay = `OBSERVACIÓN: ${action.details.text}`;
             }
             
             actionElement.innerHTML = `
@@ -1103,7 +1204,12 @@ class GoalkeeperTracker {
                 
                 // Estadísticas generales
                 checkPageBreak(70);
-                const totalActions = this.actions.filter(a => a.action !== 'cambio_portero' && a.action !== 'gol_en_contra').length;
+                const totalActions = this.actions.filter(a => 
+                    a.action !== 'cambio_portero' && 
+                    a.action !== 'gol_en_contra' && 
+                    a.action !== 'gol_a_favor' && 
+                    a.action !== 'observacion'
+                ).length;
                 const correct = this.actions.filter(a => a.result === 'correcto').length;
                 const errors = this.actions.filter(a => a.result === 'error').length;
                 const successRate = totalActions > 0 ? Math.round((correct / totalActions) * 100) : 0;
@@ -1135,7 +1241,10 @@ class GoalkeeperTracker {
                     const actionsByGoalkeeper = {};
                     
                     this.actions.forEach(action => {
-                        if (action.action !== 'cambio_portero' && action.action !== 'gol_en_contra' && action.action !== 'gol_a_favor') {
+                        if (action.action !== 'cambio_portero' && 
+                            action.action !== 'gol_en_contra' && 
+                            action.action !== 'gol_a_favor' && 
+                            action.action !== 'observacion') {
                             const goalkeeper = action.goalkeeperName || this.getCurrentGoalkeeperAtTime(action.timestamp);
                             if (!actionsByGoalkeeper[goalkeeper]) {
                                 actionsByGoalkeeper[goalkeeper] = {
@@ -1207,7 +1316,9 @@ class GoalkeeperTracker {
                             actionDisplay = `CAMBIO: ${action.details.previousGoalkeeper} → ${action.details.newGoalkeeper} (${action.details.reason})`;
                             textColor = atletiBlue;
                         } else if (action.action === 'gol_en_contra' && action.details) {
-                            actionDisplay = `GOL EN CONTRA recibido por ${action.details.goalkeeperName}`;
+                            const goalTypeDisplay = this.getGoalTypeDisplay(action.details.goalType);
+                            const faultDisplay = this.getGoalkeeperFaultDisplay(action.details.goalkeeperFault);
+                            actionDisplay = `GOL EN CONTRA - ${action.details.goalkeeperName}`;
                             textColor = [220, 53, 69];
                         } else if (action.action === 'gol_a_favor' && action.details) {
                             actionDisplay = `GOL A FAVOR - Marcador: ${action.details.scoreAfter}`;
@@ -1217,15 +1328,27 @@ class GoalkeeperTracker {
                         const result = action.result === 'cambio' ? 'CAMBIO' : 
                                      action.result === 'gol_recibido' ? 'GOL EN CONTRA' :
                                      action.result === 'gol_anotado' ? 'GOL A FAVOR' :
+                                     action.result === 'anotacion' ? 'OBSERVACIÓN' :
                                      (action.result === 'correcto' ? 'CORRECTO' : 'ERROR');
                         const half = action.half === 'first' ? '1º Tiempo' : 
                                     action.half === 'second' ? '2º Tiempo' : 'Descanso';
                         
                         const resultColor = result === 'CORRECTO' ? [40, 167, 69] : 
-                                          result === 'ERROR' ? [220, 53, 69] : textColor;
+                                          result === 'ERROR' ? [220, 53, 69] : 
+                                          result === 'OBSERVACIÓN' ? [105, 105, 105] : textColor;
                         
                         addText(`${action.time} | ${actionDisplay}`, 9, false, textColor);
-                        addText(`       → ${result} (${half})`, 8, true, resultColor);
+                        
+                        if (action.action === 'gol_en_contra' && action.details) {
+                            const goalTypeDisplay = this.getGoalTypeDisplay(action.details.goalType);
+                            const faultDisplay = this.getGoalkeeperFaultDisplay(action.details.goalkeeperFault);
+                            addText(`       → ${result} (${half}) - ${goalTypeDisplay}, ${faultDisplay}`, 8, true, resultColor);
+                        } else if (action.action === 'observacion' && action.details) {
+                            addText(`       → ${result} (${half})`, 8, true, resultColor);
+                            addText(`       "${action.details.text}"`, 8, false, [105, 105, 105]);
+                        } else {
+                            addText(`       → ${result} (${half})`, 8, true, resultColor);
+                        }
                     });
                 }
                 

@@ -151,6 +151,15 @@ body {
     background: #e8590c;
 }
 
+.btn-info {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+
+.btn-info:hover:not(:disabled) {
+    background: #0056b3;
+}
+
 .btn-install {
     background: var(--success-green);
     color: var(--white);
@@ -277,7 +286,8 @@ body {
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 0.75rem;
     border: 2px solid var(--medium-gray);
@@ -285,10 +295,17 @@ body {
     font-size: 1rem;
     transition: border-color 0.3s ease;
     min-height: 44px;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary-red);
 }

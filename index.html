@@ -219,6 +219,7 @@
                 <div class="goalkeeper-change">
                     <button id="goalkeeperChange" class="btn btn-accent">Cambio de Portero</button>
                     <button id="addCustomGesture" class="btn btn-warning">Añadir Gesto Técnico</button>
+                    <button id="addObservation" class="btn btn-info">Añadir Observación</button>
                 </div>
 
                 <!-- Action Categories -->
@@ -514,6 +515,20 @@
                                         <button class="btn btn-success" data-action="saltar_lineas" data-result="correcto">Correcto</button>
                                     </div>
                                 </div>
+                                <div class="action-item">
+                                    <div class="action-name">Posicionamiento en Fase Ofensiva</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="posicionamiento_fase_ofensiva" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_fase_ofensiva" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Posicionamiento en Fase Defensiva</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="posicionamiento_fase_defensiva" data-result="error">Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_fase_defensiva" data-result="correcto">Correcto</button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="action-group">
@@ -682,18 +697,65 @@
             </div>
         </div>
 
+        <!-- Observation Modal -->
+        <div id="observationModal" class="modal">
+            <div class="modal-content">
+                <h2>Añadir Observación</h2>
+                <form id="observationForm">
+                    <div class="form-group">
+                        <label for="observationText">Observación:</label>
+                        <textarea id="observationText" name="observationText" rows="4" 
+                                  placeholder="Ejemplo: Fran falla en gol porque está muy atrasado en relación con su defensa" 
+                                  required style="width: 100%; resize: vertical;"></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelObservation" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Añadir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Goal Against Modal -->
         <div id="goalAgainstModal" class="modal">
             <div class="modal-content">
                 <h2>Gol en Contra</h2>
-                <p>¿Qué portero recibió el gol?</p>
                 <form id="goalAgainstForm">
                     <div class="form-group">
-                        <label for="goalAgainstGoalkeeper">Portero:</label>
+                        <label for="goalAgainstGoalkeeper">Portero que recibió el gol:</label>
                         <select id="goalAgainstGoalkeeper" name="goalAgainstGoalkeeper" required>
                             <option value="">Seleccionar portero...</option>
                             <option value="titular">Titular</option>
                             <option value="suplente">Suplente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalType">Forma en que se recibe el gol:</label>
+                        <select id="goalType" name="goalType" required>
+                            <option value="">Seleccionar forma...</option>
+                            <option value="penalti">Penalti</option>
+                            <option value="cabeza">Cabeza</option>
+                            <option value="frontal_area">Desde frontal del área</option>
+                            <option value="jugada_colectiva">Jugada colectiva</option>
+                            <option value="tiro_libre">Tiro libre</option>
+                            <option value="corner">Córner</option>
+                            <option value="dentro_area">Dentro del área</option>
+                            <option value="fuera_area">Fuera del área</option>
+                            <option value="contragolpe">Contragolpe</option>
+                            <option value="tiro_lejano">Tiro lejano</option>
+                            <option value="jugada_individual">Jugada individual</option>
+                            <option value="falta_lateral">Falta lateral</option>
+                            <option value="rebote">Rebote</option>
+                            <option value="autogol">Autogol</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalkeeperFault">¿Fue fallo del portero?</label>
+                        <select id="goalkeeperFault" name="goalkeeperFault" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="si">Sí, fue fallo del portero</option>
+                            <option value="no">No, fue fallo del portero</option>
+                            <option value="dudoso">Dudoso / Debatible</option>
                         </select>
                     </div>
                     <div class="modal-actions">
