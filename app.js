@@ -59,6 +59,11 @@ class GoalkeeperTracker {
         document.getElementById('loadMatch').addEventListener('click', () => this.loadMatch());
         document.getElementById('saveMatch').addEventListener('click', () => this.saveMatch());
         document.getElementById('exportMatch').addEventListener('click', () => this.exportMatch());
+        
+        // Nuevos botones de guardar/cargar seguimiento
+        document.getElementById('saveTracking').addEventListener('click', () => this.saveTracking());
+        document.getElementById('loadTracking').addEventListener('click', () => this.loadTrackingModal());
+        document.getElementById('cancelLoad').addEventListener('click', () => document.getElementById('loadModal').classList.remove('show'));
 
         // Modal de configuración de partido
         document.getElementById('cancelMatch').addEventListener('click', () => this.hideMatchModal());
@@ -131,6 +136,12 @@ class GoalkeeperTracker {
         document.getElementById('goalAgainstModal').addEventListener('click', (e) => {
             if (e.target.id === 'goalAgainstModal') {
                 this.hideGoalAgainstModal();
+            }
+        });
+
+        document.getElementById('loadModal').addEventListener('click', (e) => {
+            if (e.target.id === 'loadModal') {
+                document.getElementById('loadModal').classList.remove('show');
             }
         });
 
@@ -1586,6 +1597,151 @@ class GoalkeeperTracker {
         
         // Si no hay cambios previos, usar el portero inicial (titular)
         return this.currentMatch.goalkeeperTitular || this.currentMatch.activeGoalkeeper;
+    }
+
+    // Funciones de guardar y cargar seguimiento
+    saveTracking() {
+        if (!this.currentMatch) {
+            this.showNotification('No hay un seguimiento activo para guardar', 'error');
+            return;
+        }
+
+        const trackingData = {
+            match: this.currentMatch,
+            actions: this.actions,
+            customGestures: this.customGestures,
+            timestamp: new Date().toISOString(),
+            savedAt: new Date().toLocaleString('es-ES'),
+            phase: this.matchPhase,
+            startTime: this.startTime,
+            pausedTime: this.pausedTime
+        };
+
+        try {
+            // Obtener seguimientos guardados existentes
+            const savedTrackings = JSON.parse(localStorage.getItem('savedTrackings') || '[]');
+            
+            // Generar nombre único para el seguimiento
+            const trackingName = `${this.currentMatch.rival} - ${this.currentMatch.date} ${this.currentMatch.time}`;
+            trackingData.name = trackingName;
+            trackingData.id = 'tracking_' + Date.now();
+
+            // Añadir el nuevo seguimiento
+            savedTrackings.push(trackingData);
+
+            // Guardar en localStorage
+            localStorage.setItem('savedTrackings', JSON.stringify(savedTrackings));
+
+            this.showNotification(`Seguimiento guardado: ${trackingName}`, 'success');
+        } catch (error) {
+            this.showNotification('Error al guardar el seguimiento', 'error');
+            console.error('Error saving tracking:', error);
+        }
+    }
+
+    loadTrackingModal() {
+        try {
+            const savedTrackings = JSON.parse(localStorage.getItem('savedTrackings') || '[]');
+            const modal = document.getElementById('loadModal');
+            const list = document.getElementById('savedTrackingsList');
+
+            if (savedTrackings.length === 0) {
+                list.innerHTML = '<p class="no-saves">No hay seguimientos guardados</p>';
+            } else {
+                list.innerHTML = '';
+                savedTrackings.forEach(tracking => {
+                    const item = document.createElement('div');
+                    item.className = 'saved-item';
+                    item.innerHTML = `
+                        <div class="saved-info">
+                            <h4>${tracking.name}</h4>
+                            <p>Guardado: ${tracking.savedAt}</p>
+                            <p>Acciones: ${tracking.actions.length}</p>
+                        </div>
+                        <div class="saved-actions">
+                            <button class="btn btn-primary" onclick="app.loadTracking('${tracking.id}')">
+                                <i class="fas fa-play"></i> Cargar
+                            </button>
+                            <button class="btn btn-error" onclick="app.deleteTracking('${tracking.id}')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+
+            modal.classList.add('show');
+        } catch (error) {
+            this.showNotification('Error al cargar la lista de seguimientos', 'error');
+            console.error('Error loading tracking list:', error);
+        }
+    }
+
+    loadTracking(trackingId) {
+        try {
+            const savedTrackings = JSON.parse(localStorage.getItem('savedTrackings') || '[]');
+            const tracking = savedTrackings.find(t => t.id === trackingId);
+
+            if (!tracking) {
+                this.showNotification('Seguimiento no encontrado', 'error');
+                return;
+            }
+
+            // Confirmar carga si hay datos actuales
+            if (this.currentMatch && this.actions.length > 0) {
+                if (!confirm('¿Estás seguro? Se perderán los datos del seguimiento actual.')) {
+                    return;
+                }
+            }
+
+            // Cargar datos del seguimiento
+            this.currentMatch = tracking.match;
+            this.actions = tracking.actions || [];
+            this.customGestures = tracking.customGestures || [];
+            this.matchPhase = tracking.phase || 'not_started';
+            this.startTime = tracking.startTime;
+            this.pausedTime = tracking.pausedTime || 0;
+
+            // Actualizar interfaz
+            this.hideWelcomeScreen();
+            this.updateDisplay();
+            this.updateActionLog();
+
+            // Cerrar modal
+            document.getElementById('loadModal').classList.remove('show');
+
+            this.showNotification(`Seguimiento cargado: ${tracking.name}`, 'success');
+        } catch (error) {
+            this.showNotification('Error al cargar el seguimiento', 'error');
+            console.error('Error loading tracking:', error);
+        }
+    }
+
+    deleteTracking(trackingId) {
+        if (!confirm('¿Estás seguro de que quieres eliminar este seguimiento?')) {
+            return;
+        }
+
+        try {
+            const savedTrackings = JSON.parse(localStorage.getItem('savedTrackings') || '[]');
+            const filteredTrackings = savedTrackings.filter(t => t.id !== trackingId);
+            
+            localStorage.setItem('savedTrackings', JSON.stringify(filteredTrackings));
+            
+            // Actualizar lista
+            this.loadTrackingModal();
+            
+            this.showNotification('Seguimiento eliminado', 'success');
+        } catch (error) {
+            this.showNotification('Error al eliminar el seguimiento', 'error');
+            console.error('Error deleting tracking:', error);
+        }
+    }
+
+    hideWelcomeScreen() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('currentMatch').style.display = 'block';
     }
 }
 

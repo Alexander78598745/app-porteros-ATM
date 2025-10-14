@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Visual - Seguimiento Porteros V.3.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <img src="escudo-atm.png" alt="Atlético de Madrid" class="logo">
+                <div class="title-container">
+                    <h1>Seguimiento Porteros</h1>
+                    <span class="version">V.3.0</span>
+                </div>
+            </div>
+            <div class="match-info">
+                <div class="match-controls">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nuevo Partido
+                    </button>
+                    <button class="btn btn-save">
+                        <i class="fas fa-save"></i> Guardar Seguimiento
+                    </button>
+                    <button class="btn btn-load">
+                        <i class="fas fa-folder-open"></i> Cargar Seguimiento
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-file-pdf"></i> Guardar PDF
+                    </button>
+                    <button class="btn btn-accent">
+                        <i class="fas fa-download"></i> Exportar PDF
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Ejemplos de botones de acción -->
+        <main class="main-content" style="padding: 2rem;">
+            <h2>Ejemplo de Botones de Acción</h2>
+            
+            <div class="action-item">
+                <div class="action-name">Blocaje Frontal Raso</div>
+                <div class="action-buttons">
+                    <button class="btn btn-error">
+                        <i class="fas fa-times"></i> Error
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-check"></i> Correcto
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-name">Desvío con Mano Natural</div>
+                <div class="action-buttons">
+                    <button class="btn btn-error">
+                        <i class="fas fa-times"></i> Error
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-check"></i> Correcto
+                    </button>
+                </div>
+            </div>
+
+            <h3>Botones de Control</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0;">
+                <button class="btn btn-phase">
+                    <i class="fas fa-play"></i> Iniciar 1º Tiempo
+                </button>
+                <button class="btn btn-phase">
+                    <i class="fas fa-stop"></i> Terminar 1º Tiempo
+                </button>
+                <button class="btn btn-accent">
+                    <i class="fas fa-exchange-alt"></i> Cambio de Portero
+                </button>
+                <button class="btn btn-warning">
+                    <i class="fas fa-plus-circle"></i> Añadir Gesto Técnico
+                </button>
+                <button class="btn btn-info">
+                    <i class="fas fa-clipboard"></i> Añadir Observación
+                </button>
+            </div>
+
+            <h3>Filtros</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="filter-btn active">
+                    <i class="fas fa-list"></i> Todas
+                </button>
+                <button class="filter-btn">
+                    <i class="fas fa-times-circle"></i> Errores
+                </button>
+                <button class="filter-btn">
+                    <i class="fas fa-check-circle"></i> Correctas
+                </button>
+                <button class="filter-btn">
+                    <i class="fas fa-clock"></i> 1º Tiempo
+                </button>
+                <button class="filter-btn">
+                    <i class="fas fa-clock"></i> 2º Tiempo
+                </button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

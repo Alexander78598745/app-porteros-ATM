@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Cambios V3 - Porteros ATM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="escudo-atm.png" alt="Atlético de Madrid" class="logo">
+                <div class="title-container">
+                    <h1>Prueba de Cambios V3</h1>
+                    <span class="version">V.3.0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <h2>Cambios Realizados:</h2>
+            
+            <!-- Prueba de Iconos en Labels -->
+            <div style="background: white; padding: 2rem; margin: 1rem 0; border-radius: 15px; box-shadow: var(--shadow);">
+                <h3>✅ 1. Iconos Añadidos a Labels</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="test1"><i class="fas fa-whistle"></i> Entrenador de Porteros:</label>
+                        <input type="text" id="test1" value="Ejemplo: José Martínez" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="test2"><i class="fas fa-user-shield"></i> Portero Titular:</label>
+                        <input type="text" id="test2" value="Ejemplo: Antonio López" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="test3"><i class="fas fa-user-friends"></i> Portero Suplente:</label>
+                        <input type="text" id="test3" value="Ejemplo: Carlos García" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prueba de Nuevas Acciones Ofensivas -->
+            <div style="background: white; padding: 2rem; margin: 1rem 0; border-radius: 15px; box-shadow: var(--shadow);">
+                <h3>✅ 2. Acciones Ofensivas Modificadas</h3>
+                <div class="action-group">
+                    <h4>Continuidad en el Juego</h4>
+                    <div class="action-item">
+                        <div class="action-name">Perfilamiento + Control Orientado + pase corto</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-error"><i class="fas fa-times"></i> Error</button>
+                            <button class="btn btn-success"><i class="fas fa-check"></i> Correcto</button>
+                        </div>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-name">Perfilamiento + Control Orientado + pase largo</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-error"><i class="fas fa-times"></i> Error</button>
+                            <button class="btn btn-success"><i class="fas fa-check"></i> Correcto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prueba de Responsividad -->
+            <div style="background: white; padding: 2rem; margin: 1rem 0; border-radius: 15px; box-shadow: var(--shadow);">
+                <h3>✅ 3. Botones Responsivos</h3>
+                <p>Redimensiona la ventana para ver cómo se adaptan los botones:</p>
+                
+                <div class="action-item">
+                    <div class="action-name">Prueba de Responsividad en Dispositivos Móviles</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-error"><i class="fas fa-times"></i> Error</button>
+                        <button class="btn btn-success"><i class="fas fa-check"></i> Correcto</button>
+                    </div>
+                </div>
+
+                <div class="action-item" style="margin-top: 1rem;">
+                    <div class="action-name">Acción con Nombre Muy Largo para Probar Adaptabilidad</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-error"><i class="fas fa-times"></i> Error</button>
+                        <button class="btn btn-success"><i class="fas fa-check"></i> Correcto</button>
+                    </div>
+                </div>
+
+                <!-- Prueba específica en diferentes anchos -->
+                <div style="margin-top: 2rem;">
+                    <h4>Prueba en diferentes anchos:</h4>
+                    <div style="width: 300px; border: 2px dashed #ccc; padding: 1rem; margin: 1rem 0;">
+                        <p><strong>Ancho: 300px (móvil pequeño)</strong></p>
+                        <div class="action-buttons">
+                            <button class="btn btn-error"><i class="fas fa-times"></i> Error</button>
+                            <button class="btn btn-success"><i class="fas fa-check"></i> Correcto</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de cambios -->
+            <div style="background: linear-gradient(135deg, #c8102e 0%, #0b5394 100%); color: white; padding: 2rem; margin: 1rem 0; border-radius: 15px;">
+                <h3>📋 Resumen de Cambios V3.0:</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>✅ <strong>Iconos añadidos:</strong> Entrenador (<i class="fas fa-whistle"></i>), Titular (<i class="fas fa-user-shield"></i>), Suplente (<i class="fas fa-user-friends"></i>)</li>
+                    <li>✅ <strong>Acción modificada:</strong> "Perfilamiento + Control Orientado" → "Perfilamiento + Control Orientado + pase corto"</li>
+                    <li>✅ <strong>Nueva acción:</strong> "Perfilamiento + Control Orientado + pase largo"</li>
+                    <li>✅ <strong>Botones responsivos:</strong> Texto se adapta mejor en móviles y tablets</li>
+                    <li>✅ <strong>CSS corregido:</strong> Error de sintaxis resuelto</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

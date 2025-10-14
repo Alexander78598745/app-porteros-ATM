@@ -7,6 +7,10 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#c8102e">
@@ -24,14 +28,31 @@
         <header class="header">
             <div class="logo-container">
                 <img src="escudo-atm.png" alt="Atlético de Madrid" class="logo">
-                <h1>Seguimiento Porteros</h1>
+                <div class="title-container">
+                    <h1>Seguimiento Porteros</h1>
+                    <span class="version">V.3.0</span>
+                </div>
             </div>
             <div class="match-info">
                 <div class="match-controls">
-                    <button id="newMatch" class="btn btn-primary">Nuevo Partido</button>
-                    <button id="saveMatch" class="btn btn-secondary" disabled>Guardar PDF</button>
-                    <button id="exportMatch" class="btn btn-accent">Exportar PDF</button>
-                    <button id="installApp" class="btn btn-install" style="display: none;">Instalar App</button>
+                    <button id="newMatch" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nuevo Partido
+                    </button>
+                    <button id="saveTracking" class="btn btn-save">
+                        <i class="fas fa-save"></i> Guardar Seguimiento
+                    </button>
+                    <button id="loadTracking" class="btn btn-load">
+                        <i class="fas fa-folder-open"></i> Cargar Seguimiento
+                    </button>
+                    <button id="saveMatch" class="btn btn-secondary" disabled>
+                        <i class="fas fa-file-pdf"></i> Guardar PDF
+                    </button>
+                    <button id="exportMatch" class="btn btn-accent">
+                        <i class="fas fa-download"></i> Exportar PDF
+                    </button>
+                    <button id="installApp" class="btn btn-install" style="display: none;">
+                        <i class="fas fa-mobile-alt"></i> Instalar App
+                    </button>
                 </div>
             </div>
         </header>
@@ -121,17 +142,17 @@
                             <input type="text" id="stadium" name="stadium" placeholder="Nombre del estadio o campo" required>
                         </div>
                         <div class="form-group">
-                            <label for="goalkeeperCoach">Entrenador de Porteros:</label>
+                            <label for="goalkeeperCoach"><i class="fas fa-whistle"></i> Entrenador de Porteros:</label>
                             <input type="text" id="goalkeeperCoach" name="goalkeeperCoach" placeholder="Nombre del entrenador" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="goalkeeperTitular">Portero Titular:</label>
+                            <label for="goalkeeperTitular"><i class="fas fa-user-shield"></i> Portero Titular:</label>
                             <input type="text" id="goalkeeperTitular" name="goalkeeperTitular" required>
                         </div>
                         <div class="form-group">
-                            <label for="goalkeeperSuplente">Portero Suplente:</label>
+                            <label for="goalkeeperSuplente"><i class="fas fa-user-friends"></i> Portero Suplente:</label>
                             <input type="text" id="goalkeeperSuplente" name="goalkeeperSuplente" required>
                         </div>
                     </div>
@@ -142,10 +163,29 @@
                         </div>
                     </div>
                     <div class="modal-actions">
-                        <button type="button" id="cancelMatch" class="btn btn-secondary">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Iniciar Seguimiento</button>
+                        <button type="button" id="cancelMatch" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Iniciar Seguimiento
+                        </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Load Tracking Modal -->
+        <div id="loadModal" class="modal">
+            <div class="modal-content">
+                <h2><i class="fas fa-folder-open"></i> Cargar Seguimiento</h2>
+                <div id="savedTrackingsList" class="saved-list">
+                    <p class="no-saves">No hay seguimientos guardados</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancelLoad" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -201,25 +241,41 @@
                 <!-- Time Controls -->
                 <div class="time-controls">
                     <div class="match-phases">
-                        <button id="startFirstHalf" class="btn btn-phase">Iniciar 1º Tiempo</button>
-                        <button id="endFirstHalf" class="btn btn-phase" disabled>Terminar 1º Tiempo</button>
-                        <button id="startSecondHalf" class="btn btn-phase" disabled>Iniciar 2º Tiempo</button>
-                        <button id="endMatch" class="btn btn-phase" disabled>Finalizar Partido</button>
+                        <button id="startFirstHalf" class="btn btn-phase">
+                            <i class="fas fa-play"></i> Iniciar 1º Tiempo
+                        </button>
+                        <button id="endFirstHalf" class="btn btn-phase" disabled>
+                            <i class="fas fa-stop"></i> Terminar 1º Tiempo
+                        </button>
+                        <button id="startSecondHalf" class="btn btn-phase" disabled>
+                            <i class="fas fa-play"></i> Iniciar 2º Tiempo
+                        </button>
+                        <button id="endMatch" class="btn btn-phase" disabled>
+                            <i class="fas fa-flag-checkered"></i> Finalizar Partido
+                        </button>
                     </div>
                     <div class="timer-section">
                         <div class="current-phase" id="currentPhase">Partido No Iniciado</div>
                         <div class="timer">
                             <span id="currentTime">00:00</span>
-                            <button id="pauseTimer" class="btn btn-small" disabled>Pausar</button>
+                            <button id="pauseTimer" class="btn btn-small" disabled>
+                            <i class="fas fa-pause"></i> Pausar
+                        </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Goalkeeper Change -->
                 <div class="goalkeeper-change">
-                    <button id="goalkeeperChange" class="btn btn-accent">Cambio de Portero</button>
-                    <button id="addCustomGesture" class="btn btn-warning">Añadir Gesto Técnico</button>
-                    <button id="addObservation" class="btn btn-info">Añadir Observación</button>
+                    <button id="goalkeeperChange" class="btn btn-accent">
+                        <i class="fas fa-exchange-alt"></i> Cambio de Portero
+                    </button>
+                    <button id="addCustomGesture" class="btn btn-warning">
+                        <i class="fas fa-plus-circle"></i> Añadir Gesto Técnico
+                    </button>
+                    <button id="addObservation" class="btn btn-info">
+                        <i class="fas fa-clipboard"></i> Añadir Observación
+                    </button>
                 </div>
 
                 <!-- Action Categories -->
@@ -240,36 +296,40 @@
                                 <div class="action-item">
                                     <div class="action-name">Blocaje Frontal Raso</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="blocaje_frontal_raso" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="blocaje_frontal_raso" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="blocaje_frontal_raso" data-result="error">
+                                            <i class="fas fa-times"></i> Error
+                                        </button>
+                                        <button class="btn btn-success" data-action="blocaje_frontal_raso" data-result="correcto">
+                                            <i class="fas fa-check"></i> Correcto
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Blocaje Lateral Raso</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="blocaje_lateral_raso" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="blocaje_lateral_raso" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="blocaje_lateral_raso" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_lateral_raso" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Blocaje Lateral Media Altura</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="blocaje_lateral_media" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="blocaje_lateral_media" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="blocaje_lateral_media" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_lateral_media" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Blocaje Frontal Media Altura</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="blocaje_frontal_media" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="blocaje_frontal_media" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="blocaje_frontal_media" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_frontal_media" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Blocaje Aéreo</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="blocaje_aereo" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="blocaje_aereo" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="blocaje_aereo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="blocaje_aereo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -279,22 +339,22 @@
                                 <div class="action-item">
                                     <div class="action-name">Desvío Mano Natural</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="desvio_mano_natural" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="desvio_mano_natural" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="desvio_mano_natural" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="desvio_mano_natural" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Desvío Mano Cambio</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="desvio_mano_cambio" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="desvio_mano_cambio" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="desvio_mano_cambio" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="desvio_mano_cambio" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Desvío 2 Manos</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="desvio_2_manos" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="desvio_2_manos" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="desvio_2_manos" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="desvio_2_manos" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -304,22 +364,22 @@
                                 <div class="action-item">
                                     <div class="action-name">Despeje 1 Puño</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="despeje_1_puno" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="despeje_1_puno" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="despeje_1_puno" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="despeje_1_puno" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Despeje 2 Puños</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="despeje_2_punos" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="despeje_2_punos" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="despeje_2_punos" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="despeje_2_punos" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Prolongación</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="prolongacion_def" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="prolongacion_def" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="prolongacion_def" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="prolongacion_def" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -329,22 +389,22 @@
                                 <div class="action-item">
                                     <div class="action-name">Reducción de Espacios</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="reduccion_espacios" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="reduccion_espacios" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="reduccion_espacios" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="reduccion_espacios" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Posición Cruz</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="posicion_cruz" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="posicion_cruz" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="posicion_cruz" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="posicion_cruz" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Apertura</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="apertura" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="apertura" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="apertura" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="apertura" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -354,8 +414,8 @@
                                 <div class="action-item">
                                     <div class="action-name">Rechace</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="rechace" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="rechace" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="rechace" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="rechace" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -371,29 +431,29 @@
                                 <div class="action-item">
                                     <div class="action-name">Posición Básica</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="reinc_posicion_basica" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="reinc_posicion_basica" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="reinc_posicion_basica" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="reinc_posicion_basica" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Mismo Lado</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="reinc_mismo_lado" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="reinc_mismo_lado" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="reinc_mismo_lado" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="reinc_mismo_lado" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Lado Contrario</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="reinc_lado_contrario" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="reinc_lado_contrario" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="reinc_lado_contrario" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="reinc_lado_contrario" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Tras Blocaje</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="reinc_tras_blocaje" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="reinc_tras_blocaje" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="reinc_tras_blocaje" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="reinc_tras_blocaje" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -409,22 +469,22 @@
                                 <div class="action-item">
                                     <div class="action-name">Pase Mano Raso</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_mano_raso" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_mano_raso" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_mano_raso" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_raso" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Mano Picado</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_mano_picado" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_mano_picado" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_mano_picado" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_picado" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Mano Alto</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_mano_alto" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_mano_alto" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_mano_alto" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_mano_alto" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -434,29 +494,29 @@
                                 <div class="action-item">
                                     <div class="action-name">Volea</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="volea" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="volea" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="volea" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="volea" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Corto</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_corto" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_corto" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_corto" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_corto" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Largo</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_largo" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_largo" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_largo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Despeje</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="despeje_ofensivo" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="despeje_ofensivo" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="despeje_ofensivo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="despeje_ofensivo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -464,24 +524,31 @@
                             <div class="action-group">
                                 <h4>Continuidad en el Juego</h4>
                                 <div class="action-item">
-                                    <div class="action-name">Perfilamiento + Control Orientado</div>
+                                    <div class="action-name">Perfilamiento + Control Orientado + pase corto</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="perfilamiento_control_orientado" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="perfilamiento_control_orientado" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="perfilamiento_control_orientado" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="perfilamiento_control_orientado" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
+                                    </div>
+                                </div>
+                                <div class="action-item">
+                                    <div class="action-name">Perfilamiento + Control Orientado + pase largo</div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-error" data-action="perfilamiento_control_orientado_largo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="perfilamiento_control_orientado_largo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Largo con Control Previo</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_largo_control_previo" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_largo_control_previo" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_largo_control_previo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo_control_previo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Pase Largo con Balón en Movimiento</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_largo_balon_movimiento" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_largo_balon_movimiento" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_largo_balon_movimiento" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_largo_balon_movimiento" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -497,36 +564,36 @@
                                 <div class="action-item">
                                     <div class="action-name">Posicionamiento y Bisectriz</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="posicionamiento_bisectriz" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="posicionamiento_bisectriz" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="posicionamiento_bisectriz" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_bisectriz" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Visión de Juego</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="vision_juego" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="vision_juego" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="vision_juego" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="vision_juego" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Saltar Líneas</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="saltar_lineas" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="saltar_lineas" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="saltar_lineas" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="saltar_lineas" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Posicionamiento en Fase Ofensiva</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="posicionamiento_fase_ofensiva" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="posicionamiento_fase_ofensiva" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="posicionamiento_fase_ofensiva" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_fase_ofensiva" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Posicionamiento en Fase Defensiva</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="posicionamiento_fase_defensiva" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="posicionamiento_fase_defensiva" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="posicionamiento_fase_defensiva" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="posicionamiento_fase_defensiva" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -536,15 +603,15 @@
                                 <div class="action-item">
                                     <div class="action-name">Comunicación Verbal</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="comunicacion_verbal" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="comunicacion_verbal" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="comunicacion_verbal" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="comunicacion_verbal" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Comunicación No Verbal</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="comunicacion_no_verbal" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="comunicacion_no_verbal" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="comunicacion_no_verbal" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="comunicacion_no_verbal" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -554,22 +621,22 @@
                                 <div class="action-item">
                                     <div class="action-name">Pase a la Espalda de la Defensa</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="pase_espalda_defensa" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="pase_espalda_defensa" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="pase_espalda_defensa" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="pase_espalda_defensa" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Desmarques de Apoyo</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="desmarques_apoyo" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="desmarques_apoyo" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="desmarques_apoyo" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="desmarques_apoyo" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                                 <div class="action-item">
                                     <div class="action-name">Despejes Orientados</div>
                                     <div class="action-buttons">
-                                        <button class="btn btn-error" data-action="despejes_orientados" data-result="error">Error</button>
-                                        <button class="btn btn-success" data-action="despejes_orientados" data-result="correcto">Correcto</button>
+                                        <button class="btn btn-error" data-action="despejes_orientados" data-result="error"><i class="fas fa-times"></i> Error</button>
+                                        <button class="btn btn-success" data-action="despejes_orientados" data-result="correcto"><i class="fas fa-check"></i> Correcto</button>
                                     </div>
                                 </div>
                             </div>
@@ -589,11 +656,21 @@
                 <div class="action-log">
                     <h3>Registro de Acciones</h3>
                     <div class="log-filters">
-                        <button class="filter-btn active" data-filter="all">Todas</button>
-                        <button class="filter-btn" data-filter="error">Errores</button>
-                        <button class="filter-btn" data-filter="correcto">Correctas</button>
-                        <button class="filter-btn" data-filter="first">1º Tiempo</button>
-                        <button class="filter-btn" data-filter="second">2º Tiempo</button>
+                        <button class="filter-btn active" data-filter="all">
+                            <i class="fas fa-list"></i> Todas
+                        </button>
+                        <button class="filter-btn" data-filter="error">
+                            <i class="fas fa-times-circle"></i> Errores
+                        </button>
+                        <button class="filter-btn" data-filter="correcto">
+                            <i class="fas fa-check-circle"></i> Correctas
+                        </button>
+                        <button class="filter-btn" data-filter="first">
+                            <i class="fas fa-clock"></i> 1º Tiempo
+                        </button>
+                        <button class="filter-btn" data-filter="second">
+                            <i class="fas fa-clock"></i> 2º Tiempo
+                        </button>
                     </div>
                     <div id="actionsList" class="actions-list">
                         <!-- Las acciones aparecerán aquí dinámicamente -->
